@@ -1,0 +1,54 @@
+﻿@using System.Reflection;
+@using Microsoft.AspNetCore.Components.Routing;
+@using Microsoft.AspNetCore.Components.WebAssembly.Services;
+@inject LazyAssemblyLoader assemblyLoader;
+<Router AppAssembly="@typeof(App).Assembly" PreferExactMatches="@true" 
+AdditionalAssemblies="@lazyLoadedAssemblies"
+OnNavigateAsync="@OnNavigateAsync">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <PageTitle>Not found</PageTitle>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <p role="alert">Sorry, there's nothing at this address.</p>
+        </LayoutView>
+    </NotFound>
+</Router>
+
+@code {
+    private List<Assembly> lazyLoadedAssemblies = new List<Assembly>();
+    private async Task OnNavigateAsync(NavigationContext args)
+    {
+        try
+        {
+            if (args.Path.StartsWith("fetchdata"))
+            {
+                var assemblies = await assemblyLoader.LoadAssembliesAsync(new[] { "Sample.dll" });
+                assemblies = await assemblyLoader.LoadAssembliesAsync(new[] { "Syncfusion.Blazor.Buttons.dll" });
+                assemblies = await assemblyLoader.LoadAssembliesAsync(new[] { "Syncfusion.Blazor.Charts.dll" });
+                assemblies = await assemblyLoader.LoadAssembliesAsync(new[] { "Syncfusion.Blazor.Data.dll" });
+                assemblies = await assemblyLoader.LoadAssembliesAsync(new[] { "Syncfusion.Blazor.DropDowns.dll" });
+                assemblies = await assemblyLoader.LoadAssembliesAsync(new[] { "Syncfusion.Blazor.Grid.dll" });
+                lazyLoadedAssemblies.AddRange(assemblies);
+            }
+            if(args.Path.StartsWith("counter"))
+            {
+                var assemblies = await assemblyLoader.LoadAssembliesAsync(new[] { "Syncfusion.Blazor.Calendars.dll" });
+                assemblies = await assemblyLoader.LoadAssembliesAsync(new[] { "Syncfusion.Blazor.Buttons.dll" });
+                assemblies = await assemblyLoader.LoadAssembliesAsync(new[] { "Syncfusion.Blazor.Lists.dll" });
+                assemblies = await assemblyLoader.LoadAssembliesAsync(new[] { "Syncfusion.Blazor.Navigations.dll" });
+                assemblies = await assemblyLoader.LoadAssembliesAsync(new[] { "Syncfusion.Blazor.Notifications.dll" });
+                assemblies = await assemblyLoader.LoadAssembliesAsync(new[] { "Syncfusion.Blazor.Popups.dll" });
+                assemblies = await assemblyLoader.LoadAssembliesAsync(new[] { "Syncfusion.Blazor.Spinner.dll" });
+                assemblies = await assemblyLoader.LoadAssembliesAsync(new[] { "Syncfusion.Blazor.SplitButtons.dll" });
+                lazyLoadedAssemblies.AddRange(assemblies);
+            }
+        }
+        catch (Exception ex)
+        {
+
+        }
+    }
+}
